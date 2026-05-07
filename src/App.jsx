@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, Suspense, createContext, useContext } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial, Float, PerspectiveCamera, Stars, Html } from '@react-three/drei';
+import { Sphere, MeshDistortMaterial, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Activity, Globe, Zap, Cpu, Terminal, AlertTriangle, Radio, BarChart3, Wifi, Lock, Volume2, VolumeX, ChevronRight } from 'lucide-react';
@@ -25,7 +25,9 @@ const CyberGlobe = () => {
   
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    globeRef.current.rotation.y = t * 0.05;
+    if (globeRef.current) {
+      globeRef.current.rotation.y = t * 0.05;
+    }
   });
 
   return (
@@ -95,7 +97,10 @@ const Sidebar = () => {
 };
 
 const StatCard = ({ label, value, icon: Icon, trend, color }) => (
-  <div className="relative group p-6 bg-slate-950/40 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden">
+  <motion.div 
+    whileHover={{ y: -5 }}
+    className="relative group p-6 bg-slate-950/40 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden h-full"
+  >
     <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: color }} />
     <div className="flex justify-between items-start mb-4">
       <div className="p-2 rounded-lg bg-white/5 text-cyan-400"><Icon size={18} /></div>
@@ -237,7 +242,7 @@ const App = () => {
                           key={item.id} 
                           initial={{ x: 50, opacity: 0 }} 
                           animate={{ x: 0, opacity: 1 }} 
-                          className="p-3 bg-white/5 border border-white/5 rounded-lg text-[9px] font-mono"
+                          className={`p-3 bg-white/5 border border-white/5 rounded-lg text-[9px] font-mono ${item.type === 'CRITICAL' ? 'border-red-500/40' : ''}`}
                         >
                            <div className="flex justify-between mb-1">
                               <span className={item.type === 'CRITICAL' ? 'text-red-400' : 'text-cyan-400'}>[{item.type}]</span>
@@ -254,8 +259,8 @@ const App = () => {
 
         </main>
 
-        {/* HUD Elements */}
-        <div className="fixed inset-0 pointer-events-none z-[80] border-[1px] border-white/5 m-4" />
+        {/* Global Overlays */}
+        <div className="fixed inset-0 pointer-events-none z-[100] border-[1px] border-white/5 m-4" />
         <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent shadow-[0_0_15px_#22d3ee]" />
 
       </div>
